@@ -99,6 +99,39 @@ const weekSchedule = [
   { day: "SUN", label: "Rest", type: "rest", key: null },
 ];
 
+const meals = [
+  {
+    phaseId: 1,
+    slots: [
+      { time: "Meal 1", emoji: "🍳", name: "Eggs & Toast", desc: "Whole eggs, sourdough, fruit on the side" },
+      { time: "Meal 2", emoji: "🍗", name: "Chicken & Rice Bowl", desc: "Grilled chicken, white rice, veggies" },
+      { time: "Meal 3", emoji: "🥩", name: "Lean Beef Stir-Fry", desc: "Ground beef, peppers, rice or potatoes" },
+      { time: "Meal 4", emoji: "🐟", name: "Fish & Sweet Potato", desc: "White fish or salmon, roasted sweet potato" },
+      { time: "Snack", emoji: "🥜", name: "Greek Yogurt & Nuts", desc: "High-protein yogurt, small handful of almonds" },
+    ],
+  },
+  {
+    phaseId: 2,
+    slots: [
+      { time: "Meal 1", emoji: "🍳", name: "Egg White Omelette", desc: "Egg whites, spinach, light cheese, berries" },
+      { time: "Meal 2", emoji: "🍗", name: "Chicken & Veggies", desc: "Grilled chicken, big salad, light dressing" },
+      { time: "Meal 3", emoji: "🥩", name: "Turkey Lettuce Wraps", desc: "Lean ground turkey, lettuce cups, salsa" },
+      { time: "Meal 4", emoji: "🐟", name: "Salmon & Greens", desc: "Baked salmon, steamed broccoli, small rice portion" },
+      { time: "Snack", emoji: "🥤", name: "Protein Shake", desc: "Whey protein, water or almond milk, banana" },
+    ],
+  },
+  {
+    phaseId: 3,
+    slots: [
+      { time: "Meal 1", emoji: "🍳", name: "Eggs & Avocado", desc: "Whole eggs, half avocado, no bread" },
+      { time: "Meal 2", emoji: "🍗", name: "Chicken Salad Bowl", desc: "Grilled chicken, mixed greens, olive oil" },
+      { time: "Meal 3", emoji: "🥩", name: "Lean Burger Patties", desc: "Extra-lean beef patties, side salad, no bun" },
+      { time: "Meal 4", emoji: "🐟", name: "White Fish & Asparagus", desc: "Cod or tilapia, roasted asparagus, lemon" },
+      { time: "Snack", emoji: "🥤", name: "Casein Shake", desc: "Slow-digesting protein, water, before bed" },
+    ],
+  },
+];
+
 export default function App() {
   const [activePhase, setActivePhase] = useState(0);
   const [activeWorkout, setActiveWorkout] = useState(null);
@@ -179,6 +212,7 @@ export default function App() {
           {[
             { id: "phases", label: "Overview" },
             { id: "training", label: "Training" },
+            { id: "meals", label: "Meals" },
             { id: "week", label: "Week View" },
             { id: "rules", label: "Rules" },
           ].map(tab => (
@@ -319,6 +353,49 @@ export default function App() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ===== MEALS ===== */}
+        {activeView === "meals" && (
+          <div>
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginBottom: "4px" }}>SAMPLE DAY</div>
+              <div style={{ fontSize: "13px", color: "#888" }}>
+                ~{phase.calories} kcal • {phase.protein}g protein • {phase.carbs}g carbs • {phase.fats}g fats
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {(meals.find(m => m.phaseId === phase.id)?.slots || []).map((slot, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: "14px",
+                  background: "#0d0d14", borderRadius: "12px", padding: "16px",
+                  border: "1px solid #1a1a2e",
+                  borderLeft: `3px solid ${phase.color}${i === 0 ? "ff" : "60"}`,
+                }}>
+                  <div style={{
+                    width: "48px", height: "48px", borderRadius: "12px",
+                    background: `${phase.color}15`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "24px", flexShrink: 0,
+                  }}>
+                    {slot.emoji}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "1.5px", color: phase.color, marginBottom: "4px", textTransform: "uppercase" }}>{slot.time}</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "16px", fontWeight: 600, color: "#fff" }}>{slot.name}</div>
+                    <div style={{ fontSize: "12px", color: "#666", marginTop: "3px" }}>{slot.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              marginTop: "16px", background: `${phase.color}08`, border: `1px solid ${phase.color}20`,
+              borderRadius: "10px", padding: "12px 16px",
+              fontSize: "12px", color: "#777", textAlign: "center", lineHeight: 1.6,
+            }}>
+              💡 These are templates — swap proteins and veggies freely. Hit your protein target first, then fill carbs and fats.
             </div>
           </div>
         )}

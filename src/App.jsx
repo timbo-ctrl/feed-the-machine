@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const phases = [
   {
@@ -138,6 +138,66 @@ export default function App() {
   const [activeView, setActiveView] = useState("phases");
   const phase = phases[activePhase];
 
+  // Tracker state
+  const [trackerEntries, setTrackerEntries] = useState([]);
+  const [trackerLoaded, setTrackerLoaded] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [quickName, setQuickName] = useState("");
+  const [quickCal, setQuickCal] = useState("");
+  const [quickPro, setQuickPro] = useState("");
+  const [quickCarb, setQuickCarb] = useState("");
+  const [quickFat, setQuickFat] = useState("");
+
+  // Load tracker from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("ftm-tracker");
+      if (stored) setTrackerEntries(JSON.parse(stored));
+    } catch (e) { /* no data */ }
+    setTrackerLoaded(true);
+  }, []);
+
+  // Save tracker to localStorage
+  useEffect(() => {
+    if (trackerLoaded) {
+      localStorage.setItem("ftm-tracker", JSON.stringify(trackerEntries));
+    }
+  }, [trackerEntries, trackerLoaded]);
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayEntries = trackerEntries.filter(e => e.date === todayKey);
+  const totals = todayEntries.reduce((a, e) => ({
+    calories: a.calories + e.calories,
+    protein: a.protein + e.protein,
+    carbs: a.carbs + e.carbs,
+    fat: a.fat + e.fat,
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+  const addTrackerEntry = () => {
+    if (!quickName.trim() || !quickCal) return;
+    const entry = {
+      id: Date.now().toString(),
+      name: quickName.trim(),
+      calories: Number(quickCal) || 0,
+      protein: Number(quickPro) || 0,
+      carbs: Number(quickCarb) || 0,
+      fat: Number(quickFat) || 0,
+      date: todayKey,
+      time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+    };
+    setTrackerEntries(prev => [entry, ...prev]);
+    setQuickName(""); setQuickCal(""); setQuickPro(""); setQuickCarb(""); setQuickFat("");
+    setShowQuickAdd(false);
+  };
+
+  const deleteTrackerEntry = (id) => {
+    setTrackerEntries(prev => prev.filter(e => e.id !== id));
+  };
+
+  const clearTrackerToday = () => {
+    setTrackerEntries(prev => prev.filter(e => e.date !== todayKey));
+  };
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -208,18 +268,18 @@ export default function App() {
         </div>
 
         {/* Nav Tabs */}
-        <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "#0d0d14", borderRadius: "10px", padding: "4px" }}>
+        <div style={{ display: "flex", gap: "4px", marginBottom: "10px", background: "#0d0d14", borderRadius: "10px", padding: "4px" }}>
           {[
             { id: "phases", label: "Overview" },
             { id: "training", label: "Training" },
             { id: "meals", label: "Meals" },
-            { id: "week", label: "Week View" },
+            { id: "week", label: "Week" },
             { id: "rules", label: "Rules" },
           ].map(tab => (
             <button key={tab.id} onClick={() => { setActiveView(tab.id); setActiveWorkout(null); }} style={{
               flex: 1, padding: "10px", border: "none", borderRadius: "8px", cursor: "pointer",
-              background: activeView === tab.id ? `${phase.color}20` : "transparent",
-              color: activeView === tab.id ? phase.color : "#555",
+              background: activeView === tab.id && activeView !== "tracker" ? `${phase.color}20` : "transparent",
+              color: activeView === tab.id && activeView !== "tracker" ? phase.color : "#555",
               fontFamily: "'JetBrains Mono', monospace", fontSize: "12px", fontWeight: 600,
               transition: "all 0.2s ease",
             }}>
@@ -227,6 +287,39 @@ export default function App() {
             </button>
           ))}
         </div>
+
+        {/* Tracker button */}
+        <button onClick={() => { setActiveView("tracker"); setActiveWorkout(null); }} style={{
+          width: "100%", padding: "14px", marginBottom: "24px",
+          borderRadius: "12px", border: "none", cursor: "pointer",
+          background: activeView === "tracker"
+            ? `linear-gradient(135deg, ${phase.color}25, ${phase.color}10)`
+            : "#0d0d14",
+          outline: activeView === "tracker" ? `1.5px solid ${phase.color}50` : "1px solid #1a1a2e",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
+          transition: "all 0.3s ease",
+          boxShadow: activeView === "tracker" ? `0 0 24px ${phase.glow}` : "none",
+        }}>
+          <span style={{ fontSize: "16px" }}>📊</span>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: "13px",
+            fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
+            color: activeView === "tracker" ? phase.color : "#666",
+            transition: "color 0.3s ease",
+          }}>
+            Macro Tracker
+          </span>
+          {totals.protein > 0 && activeView !== "tracker" && (
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: "10px",
+              color: totals.protein >= phase.protein ? phase.color : "#555",
+              background: totals.protein >= phase.protein ? `${phase.color}15` : "#1a1a2e",
+              padding: "3px 8px", borderRadius: "6px",
+            }}>
+              {Math.round(totals.protein)}g P
+            </span>
+          )}
+        </button>
 
         {/* ===== OVERVIEW ===== */}
         {activeView === "phases" && (
@@ -354,6 +447,228 @@ export default function App() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* ===== TRACKER ===== */}
+        {activeView === "tracker" && (
+          <div>
+            {/* Protein - hero stat */}
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <div style={{ display: "inline-block", position: "relative" }}>
+                <svg width="160" height="160" style={{ transform: "rotate(-90deg)" }}>
+                  <circle cx="80" cy="80" r="68" fill="none" stroke="#1a1a2e" strokeWidth="10" />
+                  <circle cx="80" cy="80" r="68" fill="none"
+                    stroke={totals.protein >= phase.protein ? phase.color : "#a8e6cf"}
+                    strokeWidth="10" strokeLinecap="round"
+                    strokeDasharray={2 * Math.PI * 68}
+                    strokeDashoffset={2 * Math.PI * 68 - Math.min(totals.protein / phase.protein, 1) * 2 * Math.PI * 68}
+                    style={{
+                      transition: "stroke-dashoffset 0.6s ease",
+                      filter: totals.protein >= phase.protein ? `drop-shadow(0 0 10px ${phase.glow})` : "none",
+                    }} />
+                </svg>
+                <div style={{
+                  position: "absolute", top: 0, left: 0, width: "160px", height: "160px",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                }}>
+                  <div style={{
+                    fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px",
+                    fontWeight: 700, color: totals.protein >= phase.protein ? phase.color : "#fff", lineHeight: 1,
+                  }}>{Math.round(totals.protein)}</div>
+                  <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginTop: "4px" }}>/ {phase.protein}g</div>
+                </div>
+              </div>
+              <div style={{
+                fontSize: "11px", letterSpacing: "3px", color: totals.protein >= phase.protein ? phase.color : "#555",
+                fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, marginTop: "8px",
+              }}>PROTEIN</div>
+            </div>
+
+            {/* Secondary macros row */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "20px",
+            }}>
+              {[
+                { label: "CALORIES", val: totals.calories, max: phase.calories, unit: "kcal", color: "#fff" },
+                { label: "CARBS", val: totals.carbs, max: phase.carbs, unit: "g", color: "#ffd3b6" },
+                { label: "FAT", val: totals.fat, max: phase.fats, unit: "g", color: "#ffb7c5" },
+              ].map((m, i) => {
+                const pct = Math.min(m.val / m.max, 1) * 100;
+                const over = m.val > m.max;
+                return (
+                  <div key={i} style={{
+                    background: "#0d0d14", border: "1px solid #1a1a2e", borderRadius: "12px",
+                    padding: "14px 12px", textAlign: "center", position: "relative", overflow: "hidden",
+                  }}>
+                    <div style={{
+                      position: "absolute", bottom: 0, left: 0, height: "3px",
+                      width: `${pct}%`,
+                      background: over ? "#ff4d6a" : m.color,
+                      opacity: 0.6, transition: "width 0.6s ease", borderRadius: "0 3px 0 0",
+                    }} />
+                    <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "#555", marginBottom: "6px" }}>{m.label}</div>
+                    <div style={{
+                      fontFamily: "'Space Grotesk', sans-serif", fontSize: "22px",
+                      fontWeight: 700, color: over ? "#ff4d6a" : "#fff", lineHeight: 1,
+                    }}>{Math.round(m.val)}</div>
+                    <div style={{ fontSize: "9px", color: "#444", marginTop: "4px" }}>/ {m.max}{m.unit}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Chat hint */}
+            <div style={{
+              background: "#0d0d14", border: "1px solid #1a1a2e",
+              borderRadius: "12px", padding: "12px 14px", marginBottom: "16px",
+              display: "flex", gap: "10px", alignItems: "center",
+            }}>
+              <span style={{ fontSize: "14px" }}>💬</span>
+              <span style={{ fontSize: "11px", color: "#555", lineHeight: 1.4 }}>
+                Tell Claude what you ate in chat — get macros to log here
+              </span>
+            </div>
+
+            {/* Quick add */}
+            {!showQuickAdd ? (
+              <button onClick={() => setShowQuickAdd(true)} style={{
+                width: "100%", padding: "14px", borderRadius: "12px",
+                background: "transparent", border: `1px dashed ${phase.color}30`,
+                color: "#555", cursor: "pointer", fontSize: "13px",
+                fontFamily: "'JetBrains Mono', monospace", fontWeight: 500,
+                marginBottom: "16px", transition: "all 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = phase.color + "60"; e.currentTarget.style.color = phase.color; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = phase.color + "30"; e.currentTarget.style.color = "#555"; }}
+              >
+                + Add food
+              </button>
+            ) : (
+              <div style={{
+                background: "#0d0d14", border: "1px solid #1a1a2e", borderRadius: "14px",
+                padding: "16px", marginBottom: "16px",
+              }}>
+                <input value={quickName} onChange={e => setQuickName(e.target.value)} placeholder="What did you eat?"
+                  onKeyDown={e => e.key === "Enter" && addTrackerEntry()}
+                  style={{
+                    width: "100%", background: "#0a0a0f", border: "1px solid #1a1a2e", borderRadius: "10px",
+                    padding: "10px 14px", color: "#fff", fontSize: "14px", fontFamily: "'Space Grotesk', sans-serif",
+                    outline: "none", marginBottom: "8px",
+                  }} />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", marginBottom: "10px" }}>
+                  {[
+                    { val: quickCal, set: setQuickCal, ph: "Calories" },
+                    { val: quickPro, set: setQuickPro, ph: "Protein (g)" },
+                    { val: quickCarb, set: setQuickCarb, ph: "Carbs (g)" },
+                    { val: quickFat, set: setQuickFat, ph: "Fat (g)" },
+                  ].map((f, i) => (
+                    <input key={i} type="number" value={f.val} onChange={e => f.set(e.target.value)} placeholder={f.ph}
+                      style={{
+                        background: "#0a0a0f", border: "1px solid #1a1a2e", borderRadius: "10px",
+                        padding: "10px 12px", color: "#ddd", fontSize: "13px",
+                        fontFamily: "'JetBrains Mono', monospace", outline: "none", width: "100%",
+                      }}
+                      onFocus={e => e.target.style.borderColor = phase.color + "40"}
+                      onBlur={e => e.target.style.borderColor = "#1a1a2e"}
+                    />
+                  ))}
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button onClick={() => setShowQuickAdd(false)} style={{
+                    flex: 1, padding: "10px", borderRadius: "10px", background: "transparent",
+                    border: "1px solid #1a1a2e", color: "#555", cursor: "pointer",
+                    fontSize: "12px", fontFamily: "'JetBrains Mono', monospace",
+                  }}>Cancel</button>
+                  <button onClick={addTrackerEntry} style={{
+                    flex: 2, padding: "10px", borderRadius: "10px",
+                    background: `${phase.color}15`, border: `1px solid ${phase.color}30`,
+                    color: phase.color, cursor: "pointer", fontSize: "12px",
+                    fontFamily: "'JetBrains Mono', monospace", fontWeight: 600,
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.background = `${phase.color}25`}
+                    onMouseLeave={e => e.currentTarget.style.background = `${phase.color}15`}
+                  >Add</button>
+                </div>
+              </div>
+            )}
+
+            {/* Today's entries */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", fontFamily: "'JetBrains Mono', monospace" }}>
+                TODAY ({todayEntries.length})
+              </div>
+              {todayEntries.length > 0 && (
+                <button onClick={clearTrackerToday} style={{
+                  background: "none", border: "none", color: "#333", cursor: "pointer",
+                  fontSize: "10px", fontFamily: "'JetBrains Mono', monospace",
+                }}
+                  onMouseEnter={e => e.currentTarget.style.color = "#ff4d6a"}
+                  onMouseLeave={e => e.currentTarget.style.color = "#333"}
+                >CLEAR DAY</button>
+              )}
+            </div>
+
+            {todayEntries.length === 0 ? (
+              <div style={{
+                textAlign: "center", padding: "32px 20px", color: "#333",
+                fontSize: "12px", fontFamily: "'JetBrains Mono', monospace",
+                border: "1px solid #1a1a2e", borderRadius: "12px", background: "#0d0d14",
+              }}>
+                Nothing logged yet
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {todayEntries.map(entry => (
+                  <div key={entry.id} style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: "#0d0d14", borderRadius: "12px", padding: "12px 14px",
+                    border: "1px solid #1a1a2e",
+                  }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontFamily: "'Space Grotesk', sans-serif", fontSize: "14px",
+                        fontWeight: 600, color: "#fff",
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      }}>{entry.name}</div>
+                      <div style={{ fontSize: "10px", color: "#555", marginTop: "3px", display: "flex", gap: "8px" }}>
+                        <span style={{ color: "#a8e6cf" }}>{entry.protein}g P</span>
+                        <span style={{ color: "#ffd3b6" }}>{entry.carbs}g C</span>
+                        <span style={{ color: "#ffb7c5" }}>{entry.fat}g F</span>
+                        <span style={{ color: "#333" }}>{entry.time}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span style={{
+                        fontFamily: "'JetBrains Mono', monospace", fontSize: "12px",
+                        fontWeight: 600, color: "#666",
+                      }}>{entry.calories}</span>
+                      <button onClick={() => deleteTrackerEntry(entry.id)} style={{
+                        background: "none", border: "none", color: "#333", cursor: "pointer",
+                        fontSize: "16px", padding: "2px 4px", lineHeight: 1,
+                      }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#ff4d6a"}
+                        onMouseLeave={e => e.currentTarget.style.color = "#333"}
+                      >×</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Protein status footer */}
+            {totals.protein > 0 && (
+              <div style={{
+                marginTop: "16px", textAlign: "center", padding: "10px",
+                fontSize: "10px", fontFamily: "'JetBrains Mono', monospace",
+                letterSpacing: "1px",
+                color: totals.protein >= phase.protein ? phase.color : "#444",
+              }}>
+                {totals.protein >= phase.protein
+                  ? `⚡ TARGET HIT — ${Math.round(totals.protein)}g PROTEIN`
+                  : `${phase.protein - Math.round(totals.protein)}g protein to go`}
+              </div>
+            )}
           </div>
         )}
 

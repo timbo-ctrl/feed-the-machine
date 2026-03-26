@@ -244,7 +244,7 @@ export default function App() {
           }}>
             {phase.name}
           </h1>
-          <div style={{ fontSize: "14px", color: "#666", marginTop: "4px" }}>{phase.weeks}</div>
+          <div style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.7)", marginTop: "4px" }}>{phase.weeks}</div>
         </div>
 
         {/* Phase Selector */}
@@ -254,7 +254,7 @@ export default function App() {
               flex: 1, padding: "14px 12px", border: `1.5px solid ${i === activePhase ? p.color : "#1a1a2e"}`,
               borderRadius: "12px", cursor: "pointer",
               background: i === activePhase ? `${p.color}15` : "#0d0d14",
-              color: i === activePhase ? p.color : "#555",
+              color: i === activePhase ? p.color : "rgba(255, 255, 255, 0.6)",
               fontFamily: "'JetBrains Mono', monospace", fontSize: "11px",
               fontWeight: i === activePhase ? 700 : 400,
               letterSpacing: "1px", textTransform: "uppercase",
@@ -279,7 +279,7 @@ export default function App() {
             <button key={tab.id} onClick={() => { setActiveView(tab.id); setActiveWorkout(null); }} style={{
               flex: 1, padding: "10px", border: "none", borderRadius: "8px", cursor: "pointer",
               background: activeView === tab.id && activeView !== "tracker" ? `${phase.color}20` : "transparent",
-              color: activeView === tab.id && activeView !== "tracker" ? phase.color : "#555",
+              color: activeView === tab.id && activeView !== "tracker" ? phase.color : "rgba(255, 255, 255, 0.6)",
               fontFamily: "'JetBrains Mono', monospace", fontSize: "12px", fontWeight: 600,
               transition: "all 0.2s ease",
             }}>
@@ -304,7 +304,7 @@ export default function App() {
           <span style={{
             fontFamily: "'JetBrains Mono', monospace", fontSize: "13px",
             fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
-            color: activeView === "tracker" ? phase.color : "#666",
+            color: activeView === "tracker" ? phase.color : "rgba(255, 255, 255, 0.7)",
             transition: "color 0.3s ease",
           }}>
             Macro Tracker
@@ -312,7 +312,7 @@ export default function App() {
           {totals.protein > 0 && activeView !== "tracker" && (
             <span style={{
               fontFamily: "'JetBrains Mono', monospace", fontSize: "10px",
-              color: totals.protein >= phase.protein ? phase.color : "#555",
+              color: totals.protein >= phase.protein ? phase.color : "rgba(255, 255, 255, 0.6)",
               background: totals.protein >= phase.protein ? `${phase.color}15` : "#1a1a2e",
               padding: "3px 8px", borderRadius: "6px",
             }}>
@@ -341,12 +341,12 @@ export default function App() {
                     width: `${(i === 0 ? phase.calories / 2100 : i === 2 ? phase.carbs / 175 : 1) * 100}%`,
                     background: phase.color, transition: "all 0.6s ease",
                   }} />
-                  <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginBottom: "8px" }}>{stat.label}</div>
+                  <div style={{ fontSize: "10px", letterSpacing: "2px", color: "rgba(255, 255, 255, 0.6)", marginBottom: "8px" }}>{stat.label}</div>
                   <div style={{
                     fontFamily: "'Space Grotesk', sans-serif", fontSize: "28px",
                     fontWeight: 700, color: "#fff",
                   }}>
-                    {stat.value}<span style={{ fontSize: "14px", color: "#555", marginLeft: "2px" }}>{stat.unit}</span>
+                    {stat.value}<span style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.6)", marginLeft: "2px" }}>{stat.unit}</span>
                   </div>
                 </div>
               ))}
@@ -357,7 +357,7 @@ export default function App() {
               background: "#0d0d14", border: "1px solid #1a1a2e", borderRadius: "14px",
               padding: "20px", marginBottom: "16px",
             }}>
-              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginBottom: "16px" }}>ACTIVITY TARGETS</div>
+              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "rgba(255, 255, 255, 0.6)", marginBottom: "16px" }}>ACTIVITY TARGETS</div>
               <div style={{ display: "flex", justifyContent: "space-between", gap: "16px" }}>
                 {[
                   { icon: "👟", label: "Steps", value: phase.steps },
@@ -367,7 +367,7 @@ export default function App() {
                   <div key={i} style={{ textAlign: "center", flex: 1 }}>
                     <div style={{ fontSize: "24px", marginBottom: "6px" }}>{item.icon}</div>
                     <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "15px", fontWeight: 600, color: "#fff" }}>{item.value}</div>
-                    <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>{item.label}</div>
+                    <div style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.6)", marginTop: "2px" }}>{item.label}</div>
                   </div>
                 ))}
               </div>
@@ -400,9 +400,9 @@ export default function App() {
                 <div style={{ fontSize: "36px" }}>{w.emoji}</div>
                 <div>
                   <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "20px", fontWeight: 700, color: "#fff" }}>{w.title}</div>
-                  <div style={{ fontSize: "12px", color: "#555", marginTop: "2px" }}>{w.exercises.length} exercises</div>
+                  <div style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)", marginTop: "2px" }}>{w.exercises.length} exercises</div>
                 </div>
-                <div style={{ marginLeft: "auto", fontSize: "20px", color: "#333" }}>→</div>
+                <div style={{ marginLeft: "auto", fontSize: "20px", color: "rgba(255, 255, 255, 0.4)" }}>→</div>
               </button>
             ))}
           </div>
@@ -476,11 +476,11 @@ export default function App() {
                     fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px",
                     fontWeight: 700, color: totals.protein >= phase.protein ? phase.color : "#fff", lineHeight: 1,
                   }}>{Math.round(totals.protein)}</div>
-                  <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginTop: "4px" }}>/ {phase.protein}g</div>
+                  <div style={{ fontSize: "10px", letterSpacing: "2px", color: "rgba(255, 255, 255, 0.6)", marginTop: "4px" }}>/ {phase.protein}g</div>
                 </div>
               </div>
               <div style={{
-                fontSize: "11px", letterSpacing: "3px", color: totals.protein >= phase.protein ? phase.color : "#555",
+                fontSize: "11px", letterSpacing: "3px", color: totals.protein >= phase.protein ? phase.color : "rgba(255, 255, 255, 0.6)",
                 fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, marginTop: "8px",
               }}>PROTEIN</div>
             </div>
@@ -507,12 +507,12 @@ export default function App() {
                       background: over ? "#ff4d6a" : m.color,
                       opacity: 0.6, transition: "width 0.6s ease", borderRadius: "0 3px 0 0",
                     }} />
-                    <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "#555", marginBottom: "6px" }}>{m.label}</div>
+                    <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "rgba(255, 255, 255, 0.6)", marginBottom: "6px" }}>{m.label}</div>
                     <div style={{
                       fontFamily: "'Space Grotesk', sans-serif", fontSize: "22px",
                       fontWeight: 700, color: over ? "#ff4d6a" : "#fff", lineHeight: 1,
                     }}>{Math.round(m.val)}</div>
-                    <div style={{ fontSize: "9px", color: "#444", marginTop: "4px" }}>/ {m.max}{m.unit}</div>
+                    <div style={{ fontSize: "9px", color: "rgba(255, 255, 255, 0.5)", marginTop: "4px" }}>/ {m.max}{m.unit}</div>
                   </div>
                 );
               })}
@@ -525,7 +525,7 @@ export default function App() {
               display: "flex", gap: "10px", alignItems: "center",
             }}>
               <span style={{ fontSize: "14px" }}>💬</span>
-              <span style={{ fontSize: "11px", color: "#555", lineHeight: 1.4 }}>
+              <span style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", lineHeight: 1.4 }}>
                 Tell Claude what you ate in chat — get macros to log here
               </span>
             </div>
@@ -535,12 +535,12 @@ export default function App() {
               <button onClick={() => setShowQuickAdd(true)} style={{
                 width: "100%", padding: "14px", borderRadius: "12px",
                 background: "transparent", border: `1px dashed ${phase.color}30`,
-                color: "#555", cursor: "pointer", fontSize: "13px",
+                color: "rgba(255, 255, 255, 0.6)", cursor: "pointer", fontSize: "13px",
                 fontFamily: "'JetBrains Mono', monospace", fontWeight: 500,
                 marginBottom: "16px", transition: "all 0.2s",
               }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = phase.color + "60"; e.currentTarget.style.color = phase.color; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = phase.color + "30"; e.currentTarget.style.color = "#555"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = phase.color + "30"; e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"; }}
               >
                 + Add food
               </button>
@@ -577,7 +577,7 @@ export default function App() {
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button onClick={() => setShowQuickAdd(false)} style={{
                     flex: 1, padding: "10px", borderRadius: "10px", background: "transparent",
-                    border: "1px solid #1a1a2e", color: "#555", cursor: "pointer",
+                    border: "1px solid #1a1a2e", color: "rgba(255, 255, 255, 0.6)", cursor: "pointer",
                     fontSize: "12px", fontFamily: "'JetBrains Mono', monospace",
                   }}>Cancel</button>
                   <button onClick={addTrackerEntry} style={{
@@ -595,23 +595,23 @@ export default function App() {
 
             {/* Today's entries */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "rgba(255, 255, 255, 0.6)", fontFamily: "'JetBrains Mono', monospace" }}>
                 TODAY ({todayEntries.length})
               </div>
               {todayEntries.length > 0 && (
                 <button onClick={clearTrackerToday} style={{
-                  background: "none", border: "none", color: "#333", cursor: "pointer",
+                  background: "none", border: "none", color: "rgba(255, 255, 255, 0.4)", cursor: "pointer",
                   fontSize: "10px", fontFamily: "'JetBrains Mono', monospace",
                 }}
                   onMouseEnter={e => e.currentTarget.style.color = "#ff4d6a"}
-                  onMouseLeave={e => e.currentTarget.style.color = "#333"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)"}
                 >CLEAR DAY</button>
               )}
             </div>
 
             {todayEntries.length === 0 ? (
               <div style={{
-                textAlign: "center", padding: "32px 20px", color: "#333",
+                textAlign: "center", padding: "32px 20px", color: "rgba(255, 255, 255, 0.4)",
                 fontSize: "12px", fontFamily: "'JetBrains Mono', monospace",
                 border: "1px solid #1a1a2e", borderRadius: "12px", background: "#0d0d14",
               }}>
@@ -631,24 +631,24 @@ export default function App() {
                         fontWeight: 600, color: "#fff",
                         overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                       }}>{entry.name}</div>
-                      <div style={{ fontSize: "10px", color: "#555", marginTop: "3px", display: "flex", gap: "8px" }}>
+                      <div style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.6)", marginTop: "3px", display: "flex", gap: "8px" }}>
                         <span style={{ color: "#a8e6cf" }}>{entry.protein}g P</span>
                         <span style={{ color: "#ffd3b6" }}>{entry.carbs}g C</span>
                         <span style={{ color: "#ffb7c5" }}>{entry.fat}g F</span>
-                        <span style={{ color: "#333" }}>{entry.time}</span>
+                        <span style={{ color: "rgba(255, 255, 255, 0.4)" }}>{entry.time}</span>
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <span style={{
                         fontFamily: "'JetBrains Mono', monospace", fontSize: "12px",
-                        fontWeight: 600, color: "#666",
+                        fontWeight: 600, color: "rgba(255, 255, 255, 0.7)",
                       }}>{entry.calories}</span>
                       <button onClick={() => deleteTrackerEntry(entry.id)} style={{
-                        background: "none", border: "none", color: "#333", cursor: "pointer",
+                        background: "none", border: "none", color: "rgba(255, 255, 255, 0.4)", cursor: "pointer",
                         fontSize: "16px", padding: "2px 4px", lineHeight: 1,
                       }}
                         onMouseEnter={e => e.currentTarget.style.color = "#ff4d6a"}
-                        onMouseLeave={e => e.currentTarget.style.color = "#333"}
+                        onMouseLeave={e => e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)"}
                       >×</button>
                     </div>
                   </div>
@@ -662,7 +662,7 @@ export default function App() {
                 marginTop: "16px", textAlign: "center", padding: "10px",
                 fontSize: "10px", fontFamily: "'JetBrains Mono', monospace",
                 letterSpacing: "1px",
-                color: totals.protein >= phase.protein ? phase.color : "#444",
+                color: totals.protein >= phase.protein ? phase.color : "rgba(255, 255, 255, 0.5)",
               }}>
                 {totals.protein >= phase.protein
                   ? `⚡ TARGET HIT — ${Math.round(totals.protein)}g PROTEIN`
@@ -676,8 +676,8 @@ export default function App() {
         {activeView === "meals" && (
           <div>
             <div style={{ marginBottom: "16px" }}>
-              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "#555", marginBottom: "4px" }}>SAMPLE DAY</div>
-              <div style={{ fontSize: "13px", color: "#888" }}>
+              <div style={{ fontSize: "10px", letterSpacing: "2px", color: "rgba(255, 255, 255, 0.6)", marginBottom: "4px" }}>SAMPLE DAY</div>
+              <div style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.85)" }}>
                 ~{phase.calories} kcal • {phase.protein}g protein • {phase.carbs}g carbs • {phase.fats}g fats
               </div>
             </div>
@@ -700,7 +700,7 @@ export default function App() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: "10px", letterSpacing: "1.5px", color: phase.color, marginBottom: "4px", textTransform: "uppercase" }}>{slot.time}</div>
                     <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "16px", fontWeight: 600, color: "#fff" }}>{slot.name}</div>
-                    <div style={{ fontSize: "12px", color: "#666", marginTop: "3px" }}>{slot.desc}</div>
+                    <div style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.7)", marginTop: "3px" }}>{slot.desc}</div>
                   </div>
                 </div>
               ))}
@@ -708,7 +708,7 @@ export default function App() {
             <div style={{
               marginTop: "16px", background: `${phase.color}08`, border: `1px solid ${phase.color}20`,
               borderRadius: "10px", padding: "12px 16px",
-              fontSize: "12px", color: "#777", textAlign: "center", lineHeight: 1.6,
+              fontSize: "12px", color: "rgba(255, 255, 255, 0.8)", textAlign: "center", lineHeight: 1.6,
             }}>
               💡 These are templates — swap proteins and veggies freely. Hit your protein target first, then fill carbs and fats.
             </div>
@@ -738,22 +738,22 @@ export default function App() {
                     background: isLift ? `${phase.color}20` : isCardio ? "#1a1a2e" : "#0a0a0f",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
-                    fontSize: "12px", color: isLift ? phase.color : "#555",
+                    fontSize: "12px", color: isLift ? phase.color : "rgba(255, 255, 255, 0.6)",
                   }}>
                     {d.day}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{
                       fontFamily: "'Space Grotesk', sans-serif", fontSize: "15px",
-                      fontWeight: 600, color: isRest ? "#444" : "#fff",
+                      fontWeight: 600, color: isRest ? "rgba(255, 255, 255, 0.5)" : "#fff",
                     }}>
                       {d.label}
                     </div>
-                    <div style={{ fontSize: "11px", color: "#555", marginTop: "2px" }}>
+                    <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)", marginTop: "2px" }}>
                       {isLift ? "45–60 min • RPE 8–9 compounds" : isCardio ? `Zone 2–3 • ${phase.cardio.split("×")[1] || "20 min"}` : "Steps + recovery"}
                     </div>
                   </div>
-                  {d.key && <div style={{ fontSize: "16px", color: "#333" }}>→</div>}
+                  {d.key && <div style={{ fontSize: "16px", color: "rgba(255, 255, 255, 0.4)" }}>→</div>}
                 </div>
               );
             })}
@@ -782,7 +782,7 @@ export default function App() {
                     fontWeight: 700, color: "#fff",
                   }}>{rule.title}</span>
                 </div>
-                <div style={{ fontSize: "13px", lineHeight: 1.6, color: "#999" }}>{rule.text}</div>
+                <div style={{ fontSize: "13px", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.9)" }}>{rule.text}</div>
               </div>
             ))}
           </div>
@@ -792,7 +792,7 @@ export default function App() {
         <div style={{
           marginTop: "48px", paddingTop: "20px",
           borderTop: "1px solid #1a1a2e", fontSize: "11px",
-          color: "#333", textAlign: "center",
+          color: "rgba(255, 255, 255, 0.4)", textAlign: "center",
         }}>
           209 lbs • ~30% BF • Target 15% • 12 weeks • Aggressive cals + phasic steps
         </div>
